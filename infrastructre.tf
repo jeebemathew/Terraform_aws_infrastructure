@@ -91,5 +91,36 @@ resource "aws_nat_gateway" "blog" {
     Name = "blog-nat"
   }
 }
+###########################################################
+#Route table public
+###########################################################
 
+resource "aws_route_table" "terraform-public" {
+  vpc_id = aws_vpc.blog.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags = {
+    Name = "terraform_public"
+  }
+}
+###########################################################
+#Route table private
+###########################################################
+
+resource "aws_route_table" "terraform-private" {
+  vpc_id = aws_vpc.blog.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.blog.id
+  }
+
+  tags = {
+    Name = "terraform_private"
+  }
+}
 
