@@ -18,3 +18,45 @@ resource "aws_vpc" "blog" {
     Name = "blog"
   }
 }
+###########################################################
+#Subnet public - 1
+###########################################################
+
+resource "aws_subnet" "public1" {
+  vpc_id     = aws_vpc.blog.id
+  availability_zone = "us-east-2a"
+  cidr_block = "172.16.0.0/18"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "blog-public-1"
+  }
+}
+###########################################################
+#Subnet public - 2
+###########################################################
+
+resource "aws_subnet" "public2" {
+  vpc_id     = aws_vpc.blog.id
+  availability_zone = "us-east-2b"
+  cidr_block = "172.16.64.0/18"
+  map_public_ip_on_launch = true
+  tags = {
+    Name = "blog-public-2"
+  }
+}
+
+###########################################################
+#Subnet private - 2
+###########################################################
+
+resource "aws_subnet" "private1" {
+  vpc_id     = aws_vpc.blog.id
+  availability_zone = "us-east-2c"
+  cidr_block = "172.16.128.0/18"
+  map_public_ip_on_launch = false
+  tags = {
+    Name = "blog-private-1"
+  }
+}
+
+
