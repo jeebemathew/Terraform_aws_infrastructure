@@ -263,3 +263,55 @@ resource "aws_security_group" "database" {
     Name = "blog-database"
   }
 }
+
+###########################################################
+#Instance for webserver
+###########################################################
+
+resource "aws_instance" "webserver" {
+
+  ami  =  "ami-07c8bc5c1ce9598c3"
+  instance_type = "t2.micro"
+  key_name = "terraform-key"
+
+  subnet_id  = aws_subnet.public1.id
+  vpc_security_group_ids = [ aws_security_group.webserver.id ]
+  tags = {
+    Name = "blog-webserver"
+  }
+}
+###########################################################
+#Instance for bastion
+###########################################################
+
+resource "aws_instance" "bastion" {
+
+  ami  =  "ami-07c8bc5c1ce9598c3"
+  instance_type = "t2.micro"
+  key_name = "terraform-key"
+
+  subnet_id  = aws_subnet.public2.id
+  vpc_security_group_ids = [ aws_security_group.bastion.id ]
+  tags = {
+    Name = "blog-bastion"
+  }
+}
+
+
+###########################################################
+#Instance for database
+###########################################################
+
+resource "aws_instance" "database" {
+
+  ami  =  "ami-07c8bc5c1ce9598c3"
+  instance_type = "t2.micro"
+  key_name = "terraform-key"
+
+  subnet_id  = aws_subnet.private1.id
+  vpc_security_group_ids = [ aws_security_group.database.id ]
+  tags = {
+    Name = "blog-database"
+  }
+}
+
