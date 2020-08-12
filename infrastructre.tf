@@ -69,5 +69,15 @@ resource "aws_internet_gateway" "igw" {
     Name = "blog"
   }
 }
+###########################################################
+#Elastic ip
+###########################################################
+
+resource "aws_eip" "nat" {
+  vpc      = true
+  tags = {
+    Name = "blog-nat"
+  }
+}
 
 
