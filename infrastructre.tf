@@ -58,5 +58,16 @@ resource "aws_subnet" "private1" {
     Name = "blog-private-1"
   }
 }
+###########################################################
+#Internet gateway
+###########################################################
+
+resource "aws_internet_gateway" "igw" {
+  vpc_id = aws_vpc.blog.id
+
+  tags = {
+    Name = "blog"
+  }
+}
 
 
