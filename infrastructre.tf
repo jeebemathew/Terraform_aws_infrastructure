@@ -135,6 +135,7 @@ resource "aws_route_table_association" "blog-public-1" {
 ###########################################################
 # route association blog-public2
 ###########################################################
+
 resource "aws_route_table_association" "blog-public-2" {
   subnet_id         = aws_subnet.public2.id
   route_table_id = aws_route_table.terraform-public.id
@@ -143,9 +144,122 @@ resource "aws_route_table_association" "blog-public-2" {
 ###########################################################
 # route association blog-private1
 ###########################################################
+
 resource "aws_route_table_association" "blog-private-1" {
   subnet_id         = aws_subnet.private1.id
   route_table_id = aws_route_table.terraform-public.id
 }
+###########################################################
+#Security group bastion
+###########################################################
+
+resource "aws_security_group" "bastion" {
+  name        = "blog-bastion"
+  description = "allow 22"
+  vpc_id      = aws_vpc.blog.id
+
+  ingress {
+  
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "blog-bastion"
+  }
+}
+
+###########################################################
+#Security Group webserver
+###########################################################
+resource "aws_security_group" "webserver" {
+  name        = "blog-webserver"
+  description = "Allow 80 and 22 from bastion"
+  vpc_id      = aws_vpc.blog.id
+
+  ingress {
+
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    security_groups = [ aws_security_group.bastion.id]
+  }
+
+  ingress {
+   
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  ingress {
+
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "blog-webserver"
+  }
+}
+
+
+###########################################################
+# Security Group database
+###########################################################
+
+resource "aws_security_group" "database" {
+  name        = "blog-database"
+  description = "allow 3306 from webserver and 22 from bastion"
+  vpc_id      = aws_vpc.blog.id
+
+  ingress {
+    
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    security_groups = [ aws_security_group.webserver.id ]
+   
+   }
+    
+  ingress {
+
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    security_groups = [ aws_security_group.webserver.id ]
+  }
+
+  
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "blog-database"
+  }
+}
