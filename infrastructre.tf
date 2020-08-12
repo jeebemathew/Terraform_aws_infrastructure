@@ -123,4 +123,29 @@ resource "aws_route_table" "terraform-private" {
     Name = "terraform_private"
   }
 }
+###########################################################
+# route association blog-public1
+###########################################################
+
+resource "aws_route_table_association" "blog-public-1" {
+  subnet_id         = aws_subnet.public1.id
+  route_table_id = aws_route_table.terraform-public.id
+}
+
+###########################################################
+# route association blog-public2
+###########################################################
+resource "aws_route_table_association" "blog-public-2" {
+  subnet_id         = aws_subnet.public2.id
+  route_table_id = aws_route_table.terraform-public.id
+}
+
+###########################################################
+# route association blog-private1
+###########################################################
+resource "aws_route_table_association" "blog-private-1" {
+  subnet_id         = aws_subnet.private1.id
+  route_table_id = aws_route_table.terraform-public.id
+}
+
 
