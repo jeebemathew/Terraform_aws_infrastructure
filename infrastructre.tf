@@ -80,4 +80,16 @@ resource "aws_eip" "nat" {
   }
 }
 
+###########################################################
+#Natgate way
+###########################################################
+
+resource "aws_nat_gateway" "blog" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public2.id
+  tags = {
+    Name = "blog-nat"
+  }
+}
+
 
